@@ -17,11 +17,11 @@ import { LoggerTimer } from 'logger-timer';
 
 const timer = new LoggerTimer();
 
-timer.start('loop');
+timer.startTimer('loop');
 
 for(let i = 0; i < 10000000; i++) {}
 
-timer.stop('loop');
+timer.stopTimer('loop');
 
 // display the time taken
 timer.dumpTimers();
