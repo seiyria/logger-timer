@@ -1,6 +1,6 @@
 {
   "name": "logger-timer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A quick shortcut to adding a bunch of timers and dumping their deltas.",
   "main": "./dist/index.js",
   "typings": "./dist/src/index.d.ts",
