@@ -27,3 +27,10 @@ timer.stopTimer('loop');
 timer.dumpTimers();
 ```
 
+## Options
+
+You can pass a few options into the `LoggerTimer` constructor:
+
+* `isActive` - whether or not the timer should be active. You can use this for `ENV` filtering.
+* `dumpThreshold` - a number that specifies the minimum threshold to dump timers for. This will allow you to ignore faster calls and show slower ones.
+

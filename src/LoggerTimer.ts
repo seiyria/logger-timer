@@ -1,6 +1,7 @@
 
 export interface LoggerTimerOptions {
   isActive: boolean;
+  dumpThreshold: number;
 }
 
 export class LoggerTimer {
@@ -12,8 +13,12 @@ export class LoggerTimer {
   // you probably want this in dev mode, but not in prod mode
   private isActive: boolean;
 
-  constructor(opts: LoggerTimerOptions = { isActive: true }) {
+  // used to filter out timer dumps by a minimum value
+  private dumpThreshold: number;
+
+  constructor(opts: LoggerTimerOptions = { isActive: true, dumpThreshold: 0 }) {
     this.isActive = opts.isActive;
+    this.dumpThreshold = opts.dumpThreshold;
   }
 
   // start a timer with a name
@@ -60,7 +65,10 @@ export class LoggerTimer {
   public dumpTimers(cb: (args) => void = console.info) {
     const deltas = this.getTimerDeltas();
     Object.keys(deltas).forEach(timerName => {
-      cb(`[${deltas[timerName]}ms] ${timerName}`);
+      const delta = deltas[timerName];
+      if(delta < this.dumpThreshold) return;
+      
+      cb(`[${delta}ms] ${timerName}`);
     });
   }
 
