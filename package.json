@@ -1,11 +1,11 @@
 {
   "name": "logger-timer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A quick shortcut to adding a bunch of timers and dumping their deltas.",
   "main": "./dist/index.js",
   "typings": "./dist/src/index.d.ts",
   "scripts": {
-    "prepare": "npm run build",
+    "prepublish": "npm run build",
     "build": "webpack --config webpack.config.js",
     "test": "ava-ts src/**/*.spec.ts"
   },
