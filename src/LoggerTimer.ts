@@ -62,13 +62,15 @@ export class LoggerTimer {
   }
 
   // dump the timers in a nice format, default to console.info
-  public dumpTimers(cb: (args) => void = console.info) {
+  public dumpTimers(cb?: (this: void, args) => void);
+  public dumpTimers<T>(cb: (this: T, args) => void, thisArg: T);
+  public dumpTimers<T>(cb: (this: T | void, args) => void = console.log, thisArg?: T) {
     const deltas = this.getTimerDeltas();
     Object.keys(deltas).forEach(timerName => {
       const delta = deltas[timerName];
       if(delta < this.dumpThreshold) return;
-      
-      cb(`[${delta}ms] ${timerName}`);
+
+      cb.call(thisArg, `[${delta}ms] ${timerName}`);
     });
   }
 
