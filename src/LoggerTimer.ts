@@ -1,13 +1,13 @@
-
 export interface LoggerTimerOptions {
   isActive: boolean;
   dumpThreshold: number;
 }
 
-export class LoggerTimer {
+type TimerKey = string;
 
-  private timerStarts: { [timer: string]: number } = {};
-  private timerStops:  { [timer: string]: number } = {};
+export class LoggerTimer {
+  private timerStarts: Record<TimerKey, number> = {};
+  private timerStops: Record<TimerKey, number> = {};
 
   // used to toggler if this loggertimer should track anything
   // you probably want this in dev mode, but not in prod mode
@@ -22,27 +22,28 @@ export class LoggerTimer {
   }
 
   // start a timer with a name
-  public startTimer(timerName: string) {
-
+  public startTimer(timerName: TimerKey) {
     // can't start timers if not active
-    if(!this.isActive) return;
+    if (!this.isActive) return;
 
     // can't start a started timer
-    if(this.timerStarts[timerName]) throw new Error(`Timer ${timerName} has already been started!`);
+    if (this.timerStarts[timerName])
+      throw new Error(`Timer ${timerName} has already been started!`);
 
     this.timerStarts[timerName] = Date.now();
   }
 
-  public stopTimer(timerName: string) {
-
+  public stopTimer(timerName: TimerKey) {
     // not that it should matter, but it doesn't hurt to be thorough
-    if(!this.isActive) return;
+    if (!this.isActive) return;
 
     // if a timer hasn't been started, it can't be stopped
-    if(!this.timerStarts[timerName]) throw new Error(`Timer ${timerName} has not been started!`);
+    if (!this.timerStarts[timerName])
+      throw new Error(`Timer ${timerName} has not been started!`);
 
     // just some sanity checking
-    if(this.timerStops[timerName]) throw new Error(`Timer ${timerName} has already been stopped!`);
+    if (this.timerStops[timerName])
+      throw new Error(`Timer ${timerName} has already been stopped!`);
 
     this.timerStops[timerName] = Date.now();
   }
@@ -52,24 +53,25 @@ export class LoggerTimer {
     this.isActive = isActive;
   }
 
-  public getTimerDeltas(): { [timer: string]: number } {
+  public getTimerDeltas(): Record<TimerKey, number> {
+    const deltas: Record<TimerKey, number> = {};
 
     // only iterate over timerStops because we don't care about unstopped timers
-    return Object.keys(this.timerStops).reduce((prev, cur) => {
-      prev[cur] = this.timerStops[cur] - this.timerStarts[cur];
-      return prev;
-    }, {});
+    Object.keys(this.timerStops).forEach((timerKey) => {
+      deltas[timerKey] = this.timerStops[timerKey] - this.timerStarts[timerKey];
+    });
+
+    return deltas;
   }
 
   // dump the timers in a nice format, default to console.info
-  public dumpTimers(cb: (args) => void = console.info) {
+  public dumpTimers(cb: (args: string) => void = console.info) {
     const deltas = this.getTimerDeltas();
-    Object.keys(deltas).forEach(timerName => {
+    Object.keys(deltas).forEach((timerName) => {
       const delta = deltas[timerName];
-      if(delta < this.dumpThreshold) return;
-      
+      if (delta < this.dumpThreshold) return;
+
       cb(`[${delta}ms] ${timerName}`);
     });
   }
-
 }
